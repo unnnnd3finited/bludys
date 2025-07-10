@@ -22,9 +22,17 @@ const songs = [
     weeklySession: true,
   },
     {
-    title: "bakground ",
+    title: "bakground",
     artist: "Gotham love",
     src: "static/songs/bak.mp3",
+    plays: 0,
+    favorite: true,
+    weeklySession: true,
+  },
+  {
+    title: "Ethereal",
+    artist: "mikeeysmind",
+    src: "static/songs/ethe.mp3",
     plays: 0,
     favorite: true,
     weeklySession: true,
