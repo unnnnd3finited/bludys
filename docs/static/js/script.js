@@ -21,6 +21,14 @@ const songs = [
     favorite: true,
     weeklySession: true,
   },
+    {
+    title: "bakground ",
+    artist: "Gotham love",
+    src: "static/songs/bak.mp3",
+    plays: 0,
+    favorite: true,
+    weeklySession: true,
+  },
   {
     title: "Tek it",
     artist: "Cafunè",
