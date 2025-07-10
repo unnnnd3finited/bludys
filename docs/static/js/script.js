@@ -116,37 +116,16 @@ const weeklySessionsEl = document.getElementById("weekly-sessions");
 const favoritesEl = document.getElementById("favorites");
 const allSongsEl = document.getElementById("all-songs");
 
-// Funzioni per caricare e salvare plays da localStorage
-function loadPlaysFromStorage() {
-  const savedPlays = localStorage.getItem("songPlays");
-  if (savedPlays) {
-    try {
-      const playsObj = JSON.parse(savedPlays);
-      songs.forEach(song => {
-        if (playsObj[song.src] !== undefined) {
-          song.plays = playsObj[song.src];
-        }
-      });
-    } catch (e) {
-      console.error("Errore nel parsing dei plays da localStorage", e);
-    }
-  }
-}
-
-function savePlaysToStorage() {
-  const playsObj = {};
-  songs.forEach(song => {
-    playsObj[song.src] = song.plays;
-  });
-  localStorage.setItem("songPlays", JSON.stringify(playsObj));
-}
-
 function loadSong(index) {
   const song = songs[index];
   currentSongIndex = index;
   audio.src = song.src;
   titleEl.textContent = song.title;
   artistEl.textContent = song.artist;
+
+  // *** QUI aggiorniamo il titolo della pagina dinamicamente ***
+  document.title = `${song.title} - ${song.artist}`;
+
   currentGifIndex = 0;
   clearInterval(coverInterval);
   updateCoverGif();
@@ -163,11 +142,6 @@ function updateCoverGif() {
 }
 
 function playSong() {
-  // Incrementa plays, salva e aggiorna classifica
-  songs[currentSongIndex].plays++;
-  savePlaysToStorage();
-  renderMostListened();
-
   audio.play();
   isPlaying = true;
   playBtn.innerHTML = '<i class="fas fa-pause"></i>';
@@ -275,13 +249,6 @@ function renderSongList(container, list) {
   list.forEach((song) => {
     const li = document.createElement("li");
     li.textContent = song.title + " - " + song.artist;
-
-    // Aggiungi contatore plays a destra
-    const playsSpan = document.createElement("span");
-    playsSpan.classList.add("counter");
-    playsSpan.textContent = song.plays;
-    li.appendChild(playsSpan);
-
     li.addEventListener("click", () => {
       loadSong(songs.indexOf(song));
       playSong();
@@ -320,12 +287,11 @@ searchInput.addEventListener("input", () => {
   renderSongList(allSongsEl, filtered);
 });
 
-// Carica plays da localStorage e renderizza
-loadPlaysFromStorage();
 renderMostListened();
 renderWeeklySessions();
 renderFavorites();
 
-// Carica la prima canzone all’avvio
+// Carica la prima canzone all'avvio
 loadSong(0);
+
 
