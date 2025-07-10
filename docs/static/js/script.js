@@ -133,30 +133,26 @@ songs.forEach(song => {
   song.coverGifs = commonGifs;
 });
 
-// Caricamento plays da localStorage se presente
+// Carica plays salvati se ci sono
 function loadPlaysFromStorage() {
-  const data = localStorage.getItem("songPlays");
-  if (data) {
-    try {
-      const savedPlays = JSON.parse(data);
-      songs.forEach(song => {
-        if (savedPlays[song.src] !== undefined) {
-          song.plays = savedPlays[song.src];
-        }
-      });
-    } catch {
-      // errore nel parsing, ignora
-    }
+  const storedPlays = localStorage.getItem('songPlays');
+  if (storedPlays) {
+    const playsData = JSON.parse(storedPlays);
+    songs.forEach(song => {
+      if (playsData[song.title] !== undefined) {
+        song.plays = playsData[song.title];
+      }
+    });
   }
 }
+loadPlaysFromStorage();
 
-// Salvataggio plays su localStorage
 function savePlaysToStorage() {
   const playsData = {};
   songs.forEach(song => {
-    playsData[song.src] = song.plays;
+    playsData[song.title] = song.plays;
   });
-  localStorage.setItem("songPlays", JSON.stringify(playsData));
+  localStorage.setItem('songPlays', JSON.stringify(playsData));
 }
 
 let currentSongIndex = 0;
@@ -194,10 +190,8 @@ function loadSong(index) {
   const song = songs[index];
   currentSongIndex = index;
   audio.src = song.src;
-  titleEl.textContent = song.title + " (" + song.plays + " plays)";
+  titleEl.textContent = song.title;
   artistEl.textContent = song.artist;
-  document.title = `${song.title} - ${song.artist}`; // titolo pagina dinamico
-
   currentGifIndex = 0;
   clearInterval(coverInterval);
   updateCoverGif();
@@ -207,6 +201,8 @@ function loadSong(index) {
       updateCoverGif();
     }, 5000);
   }
+  // Cambia il titolo della pagina
+  document.title = song.title + " - " + song.artist;
 }
 
 function updateCoverGif() {
@@ -217,6 +213,18 @@ function playSong() {
   audio.play();
   isPlaying = true;
   playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
+  // Incrementa il contatore plays quando parte la canzone
+  songs[currentSongIndex].plays++;
+
+  // Salva nel localStorage dopo aver aggiornato
+  savePlaysToStorage();
+
+  // Aggiorna le liste
+  renderMostListened();
+  renderWeeklySessions();
+  renderFavorites();
+  renderAllSongs();
 }
 
 function pauseSong() {
@@ -255,14 +263,6 @@ function nextSong() {
   playSong();
 }
 
-// Incrementa contatore plays quando si avvia una canzone
-audio.addEventListener("play", () => {
-  songs[currentSongIndex].plays++;
-  savePlaysToStorage();
-  loadSong(currentSongIndex); // aggiornare titolo + plays nel menu
-  renderMostListened();
-});
-
 function toggleShuffle() {
   shuffle = !shuffle;
   shuffleBtn.classList.toggle("active", shuffle);
@@ -289,11 +289,14 @@ audio.addEventListener("timeupdate", () => {
 
     let currentM = Math.floor(currentTime / 60);
     let currentS = Math.floor(currentTime % 60);
+    if (currentS < 10) currentS = "0" + currentS;
+
     let durM = Math.floor(duration / 60);
     let durS = Math.floor(duration % 60);
+    if (durS < 10) durS = "0" + durS;
 
-    currentTimeEl.textContent = `${currentM}:${currentS < 10 ? "0" : ""}${currentS}`;
-    durationEl.textContent = `${durM}:${durS < 10 ? "0" : ""}${durS}`;
+    currentTimeEl.textContent = `${currentM}:${currentS}`;
+    durationEl.textContent = `${durM}:${durS}`;
   }
 });
 
@@ -305,108 +308,69 @@ progressContainer.addEventListener("click", (e) => {
   audio.currentTime = (clickX / width) * duration;
 });
 
-menuBtn.addEventListener("click", () => {
-  dropdown.classList.toggle("hidden");
-});
-
-searchInput.addEventListener("input", () => {
-  const searchTerm = searchInput.value.toLowerCase();
-  renderAllSongs(searchTerm);
-});
-
-function renderSongListItem(song, index) {
-  const li = document.createElement("li");
-  li.textContent = `${song.title} - ${song.artist} (${song.plays} plays)`;
-  li.title = `${song.title} - ${song.artist}`;
-  li.classList.add("song-list-item");
-  li.style.cursor = "pointer";
-  li.addEventListener("click", () => {
-    loadSong(index);
-    playSong();
-    dropdown.classList.add("hidden");
-  });
-  return li;
-}
-
-function renderMostListened() {
-  // Ordina per plays decrescente e prendi top 5
-  const topSongs = [...songs].sort((a, b) => b.plays - a.plays).slice(0, 5);
-  mostListenedEl.innerHTML = "";
-  topSongs.forEach(song => {
-    const index = songs.indexOf(song);
-    mostListenedEl.appendChild(renderSongListItem(song, index));
-  });
-}
-
-function renderWeeklySessions() {
-  weeklySessionsEl.innerHTML = "";
-  songs.forEach((song, index) => {
-    if (song.weeklySession) {
-      weeklySessionsEl.appendChild(renderSongListItem(song, index));
-    }
-  });
-}
-
-function renderFavorites() {
-  favoritesEl.innerHTML = "";
-  songs.forEach((song, index) => {
-    if (song.favorite) {
-      favoritesEl.appendChild(renderSongListItem(song, index));
-    }
-  });
-}
-
-function renderAllSongs(filter = "") {
-  allSongsEl.innerHTML = "";
-  songs.forEach((song, index) => {
-    if (
-      song.title.toLowerCase().includes(filter) ||
-      song.artist.toLowerCase().includes(filter)
-    ) {
-      allSongsEl.appendChild(renderSongListItem(song, index));
-    }
-  });
-}
-
-// Gestione toggle sezioni a tendina
-const toggleBtns = document.querySelectorAll(".toggle-section-btn");
-
-toggleBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const ul = btn.nextElementSibling; // la lista sotto il bottone
-
-    const isVisible = !ul.classList.contains("hidden");
-
-    // chiudi tutte le liste
-    document.querySelectorAll(".song-list").forEach((list) => {
-      list.classList.add("hidden");
-    });
-
-    if (!isVisible) {
-      // apri quella cliccata
-      ul.classList.remove("hidden");
-    }
-  });
-});
-
-// Apri automaticamente la prima sezione all'apertura del menu
-document.addEventListener("DOMContentLoaded", () => {
-  loadPlaysFromStorage();
-  loadSong(currentSongIndex);
-  renderMostListened();
-  renderWeeklySessions();
-  renderFavorites();
-  renderAllSongs();
-
-  const firstList = document.querySelector(".song-list");
-  if (firstList) {
-    firstList.classList.remove("hidden");
-  }
-});
-
 playBtn.addEventListener("click", togglePlay);
 prevBtn.addEventListener("click", prevSong);
 nextBtn.addEventListener("click", nextSong);
 shuffleBtn.addEventListener("click", toggleShuffle);
 repeatBtn.addEventListener("click", toggleRepeat);
 
+menuBtn.addEventListener("click", () => {
+  dropdown.classList.toggle("hidden");
+  searchInput.value = "";
+  renderAllSongs(songs);
+});
+
+function renderSongList(container, list) {
+  container.innerHTML = "";
+  if (list.length === 0) {
+    container.innerHTML = "<li>Nessuna canzone</li>";
+    return;
+  }
+  list.forEach((song) => {
+    const li = document.createElement("li");
+    li.textContent = `${song.title} - ${song.artist} (plays: ${song.plays})`;
+    li.addEventListener("click", () => {
+      loadSong(songs.indexOf(song));
+      playSong();
+      dropdown.classList.add("hidden");
+    });
+    container.appendChild(li);
+  });
+}
+
+function renderAllSongs(list = songs) {
+  renderSongList(allSongsEl, list);
+}
+
+function renderMostListened() {
+  const sorted = [...songs].sort((a, b) => b.plays - a.plays);
+  renderSongList(mostListenedEl, sorted.slice(0, 5));
+}
+
+function renderWeeklySessions() {
+  const weekly = songs.filter((s) => s.weeklySession);
+  renderSongList(weeklySessionsEl, weekly);
+}
+
+function renderFavorites() {
+  const favs = songs.filter((s) => s.favorite);
+  renderSongList(favoritesEl, favs);
+}
+
+searchInput.addEventListener("input", () => {
+  const term = searchInput.value.toLowerCase();
+  const filtered = songs.filter(
+    (s) =>
+      s.title.toLowerCase().includes(term) ||
+      s.artist.toLowerCase().includes(term)
+  );
+  renderSongList(allSongsEl, filtered);
+});
+
+renderMostListened();
+renderWeeklySessions();
+renderFavorites();
+renderAllSongs();
+
+// Carica la prima canzone all'avvio
+loadSong(0);
