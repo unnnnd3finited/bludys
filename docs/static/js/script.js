@@ -9,7 +9,7 @@ const songs = [
     title: "nope your too late i already died (slowed)",
     artist: "wifiskeleton",
     src: "static/songs/deds.mp3",
-    plays: 0,
+    plays: 12,
     favorite: true,
     weeklySession: true,
   },
@@ -17,7 +17,7 @@ const songs = [
     title: "nope your too late i already died",
     artist: "wifiskeleton",
     src: "static/songs/ded.mp3",
-    plays: 0,
+    plays: 5,
     favorite: false,
     weeklySession: true,
   },
@@ -25,7 +25,7 @@ const songs = [
     title: "strangers",
     artist: "proderics",
     src: "static/songs/strange.mp3",
-    plays: 0,
+    plays: 22,
     favorite: true,
     weeklySession: true,
   },
@@ -33,7 +33,7 @@ const songs = [
     title: "i threw a rock off an overpass and killed a guy",
     artist: "sign crushes motorist",
     src: "static/songs/tweak.mp3",
-    plays: 0,
+    plays: 22,
     favorite: true,
     weeklySession: true,
   },
@@ -41,7 +41,7 @@ const songs = [
     title: "Nuts (slowed)",
     artist: "Lil peep",
     src: "static/songs/nutss.mp3",
-    plays: 0,
+    plays: 22,
     favorite: true,
     weeklySession: true,
   },
@@ -49,7 +49,7 @@ const songs = [
     title: "Nuts (extended + sped up)",
     artist: "Lil peep",
     src: "static/songs/nuts.mp3",
-    plays: 0,
+    plays: 22,
     favorite: true,
     weeklySession: true,
   },
@@ -57,7 +57,7 @@ const songs = [
     title: "The love I lost (slowed + extended version)",
     artist: "Fried by flouride",
     src: "static/songs/lost.mp3",
-    plays: 0,
+    plays: 22,
     favorite: true,
     weeklySession: true,
   },
@@ -65,7 +65,7 @@ const songs = [
     title: "Skin",
     artist: "otuka",
     src: "static/songs/skin.mp3",
-    plays: 0,
+    plays: 22,
     favorite: true,
     weeklySession: true,
   },
@@ -73,7 +73,7 @@ const songs = [
     title: "August 10 (slowed + reverb)",
     artist: "Julie Doiron",
     src: "static/songs/august.mp3",
-    plays: 0,
+    plays: 22,
     favorite: true,
     weeklySession: true,
   },
@@ -122,10 +122,7 @@ function loadSong(index) {
   audio.src = song.src;
   titleEl.textContent = song.title;
   artistEl.textContent = song.artist;
-
-  // *** QUI aggiorniamo il titolo della pagina dinamicamente ***
-  document.title = `${song.title} - ${song.artist}`;
-
+  document.title = `${song.title} - ${song.artist}`; // titolo dinamico pagina
   currentGifIndex = 0;
   clearInterval(coverInterval);
   updateCoverGif();
@@ -145,6 +142,14 @@ function playSong() {
   audio.play();
   isPlaying = true;
   playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
+  // Incrementa il contatore plays solo quando parte la canzone
+  songs[currentSongIndex].plays++;
+  // Aggiorna la lista Più ascoltate e anche le altre che mostrano plays
+  renderMostListened();
+  renderWeeklySessions();
+  renderFavorites();
+  renderAllSongs();
 }
 
 function pauseSong() {
@@ -248,7 +253,7 @@ function renderSongList(container, list) {
   }
   list.forEach((song) => {
     const li = document.createElement("li");
-    li.textContent = song.title + " - " + song.artist;
+    li.textContent = `${song.title} - ${song.artist} (${song.plays} plays)`;
     li.addEventListener("click", () => {
       loadSong(songs.indexOf(song));
       playSong();
@@ -258,7 +263,7 @@ function renderSongList(container, list) {
   });
 }
 
-function renderAllSongs(list) {
+function renderAllSongs(list = songs) {
   renderSongList(allSongsEl, list);
 }
 
@@ -287,11 +292,11 @@ searchInput.addEventListener("input", () => {
   renderSongList(allSongsEl, filtered);
 });
 
+// render iniziali
 renderMostListened();
 renderWeeklySessions();
 renderFavorites();
+renderAllSongs();
 
 // Carica la prima canzone all'avvio
 loadSong(0);
-
-
