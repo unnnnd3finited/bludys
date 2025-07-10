@@ -22,6 +22,14 @@ const songs = [
     weeklySession: true,
   },
     {
+    title: "Pretty Girl (slowed + reverb)",
+    artist: "Clairo",
+    src: "static/songs/pretty.mp3",
+    plays: 0,
+    favorite: true,
+    weeklySession: true,
+  },
+    {
     title: "bakground",
     artist: "Gotham love",
     src: "static/songs/bak.mp3",
