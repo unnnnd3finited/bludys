@@ -13,6 +13,14 @@ const songs = [
     favorite: true,
     weeklySession: true,
   },
+    {
+    title: "from the start (speed up)",
+    artist: "laufey",
+    src: "static/songs/start.mp3",
+    plays: 0,
+    favorite: true,
+    weeklySession: true,
+  },
   {
     title: "nope your too late i already died",
     artist: "wifiskeleton",
