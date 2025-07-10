@@ -16,7 +16,7 @@ const songs = [
   {
     title: "nope your too late i already died",
     artist: "wifiskeleton",
-    src: "songs/ded.mp3",
+    src: "static/songs/ded.mp3",
     plays: 5,
     favorite: false,
     weeklySession: true,
@@ -24,7 +24,7 @@ const songs = [
   {
     title: "strangers",
     artist: "proderics",
-    src: "songs/strange.mp3",
+    src: "static/songs/strange.mp3",
     plays: 22,
     favorite: true,
     weeklySession: true,
@@ -32,7 +32,7 @@ const songs = [
   {
     title: "i threw a rock off an overpass and killed a guy",
     artist: "sign crushes motorist",
-    src: "songs/tweak.mp3",
+    src: "static/songs/tweak.mp3",
     plays: 22,
     favorite: true,
     weeklySession: true,
@@ -40,7 +40,7 @@ const songs = [
   {
     title: "Nuts (slowed)",
     artist: "Lil peep",
-    src: "songs/nutss.mp3",
+    src: "static/songs/nutss.mp3",
     plays: 22,
     favorite: true,
     weeklySession: true,
@@ -48,7 +48,7 @@ const songs = [
   {
     title: "Nuts (extended + sped up)",
     artist: "Lil peep",
-    src: "songs/nuts.mp3",
+    src: "static/songs/nuts.mp3",
     plays: 22,
     favorite: true,
     weeklySession: true,
@@ -56,7 +56,7 @@ const songs = [
   {
     title: "The love I lost (slowed + extended version)",
     artist: "Fried by flouride",
-    src: "songs/lost.mp3",
+    src: "static/songs/lost.mp3",
     plays: 22,
     favorite: true,
     weeklySession: true,
@@ -64,7 +64,7 @@ const songs = [
   {
     title: "Skin",
     artist: "otuka",
-    src: "songs/skin.mp3",
+    src: "static/songs/skin.mp3",
     plays: 22,
     favorite: true,
     weeklySession: true,
@@ -72,7 +72,7 @@ const songs = [
   {
     title: "August 10 (slowed + reverb)",
     artist: "Julie Doiron",
-    src: "songs/august.mp3",
+    src: "static/songs/august.mp3",
     plays: 22,
     favorite: true,
     weeklySession: true,
