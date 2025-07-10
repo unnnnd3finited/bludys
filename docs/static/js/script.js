@@ -141,6 +141,11 @@ function playSong() {
   audio.play();
   isPlaying = true;
   playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
+  // Incrementa il contatore plays
+  songs[currentSongIndex].plays++;
+  updatePlayCountDisplay();
+  renderMostListened(); // Aggiorna classifica
 }
 
 function pauseSong() {
@@ -245,6 +250,13 @@ function renderSongList(container, list) {
   list.forEach((song) => {
     const li = document.createElement("li");
     li.textContent = song.title + " - " + song.artist;
+
+    // Mostra il numero di plays accanto al titolo
+    const counter = document.createElement("span");
+    counter.classList.add("counter");
+    counter.textContent = ` (${song.plays} plays)`;
+    li.appendChild(counter);
+
     li.addEventListener("click", () => {
       loadSong(songs.indexOf(song));
       playSong();
@@ -283,9 +295,13 @@ searchInput.addEventListener("input", () => {
   renderSongList(allSongsEl, filtered);
 });
 
-renderMostListened();
-renderWeeklySessions();
-renderFavorites();
+// Funzione per aggiornare la visualizzazione del contatore in lista Più Ascoltate
+function updatePlayCountDisplay() {
+  renderMostListened();
+}
 
 // Carica la prima canzone all'avvio
 loadSong(0);
+renderMostListened();
+renderWeeklySessions();
+renderFavorites();
