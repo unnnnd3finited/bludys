@@ -45,6 +45,14 @@ const songs = [
     favorite: true,
     weeklySession: true,
   },
+      {
+    title: "i wish that everything would stop",
+    artist: "666swish",
+    src: "static/songs/wish.mp3",
+    plays: 0,
+    favorite: true,
+    weeklySession: true,
+  },
   {
     title: "Ethereal",
     artist: "mikeeysmind",
