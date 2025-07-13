@@ -22,6 +22,14 @@ const songs = [
     weeklySession: true,
   },
     {
+    title: "glued 2 u",
+    artist: "666swish",
+    src: "static/songs/glued.mp3",
+    plays: 0,
+    favorite: true,
+    weeklySession: true,
+  },
+    {
     title: "505 (slowed)",
     artist: "artic monkeys",
     src: "static/songs/505.mp3",
